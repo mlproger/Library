@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import UserBase
 from core.models import User
 
-
 """
 CREATE
 """
+
 
 async def user_create(session: AsyncSession, user: UserBase) -> User | None:
     user = User(**user.model_dump())
@@ -21,6 +21,7 @@ async def user_create(session: AsyncSession, user: UserBase) -> User | None:
 READ
 """
 
+
 async def user_read(session: AsyncSession, user_name: str) -> User | None:
     stmt = select(User).where(User.user_name == user_name)
     result: Result = await session.execute(stmt)
@@ -28,3 +29,10 @@ async def user_read(session: AsyncSession, user_name: str) -> User | None:
     if user:
         return list(user)[0]
     return None
+
+
+async def users_read(session: AsyncSession) -> list[User] | None:
+    stmt = select(User).order_by(User.id)
+    result: Result = await session.execute(stmt)
+    users = result.scalars().all()
+    return list(users)

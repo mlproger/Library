@@ -12,10 +12,12 @@ async def set_rent(user_name: str, book_id: int, rent_date: str, session: AsyncS
 
     user = await user_crud.user_read(session=session, user_name=user_name)
     print(user)
-    book_before_rent = user.books
-    book_after_rent = book_before_rent.append(book_id)
-    print(book_after_rent)
-    setattr(user, "books", book_after_rent)
+    books = user.books
+    if not books:
+        books = []
+    books.append(book_id)
+    print(books)
+    setattr(user, "books", books)
     await session.commit()
 
     if not book:
